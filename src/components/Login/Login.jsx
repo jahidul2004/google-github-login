@@ -3,17 +3,31 @@ import {
     signInWithPopup,
     signOut,
     GithubAuthProvider,
+    onAuthStateChanged,
 } from "firebase/auth";
 import auth from "../../Firebase/firebase.init";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Login = () => {
     const googleProvider = new GoogleAuthProvider();
     const gitProvider = new GithubAuthProvider();
 
     const [user, setUser] = useState(null);
-
     const [signed, setSigned] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                setUser(currentUser);
+                setSigned(true);
+            } else {
+                setUser(null);
+                setSigned(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const handleGoogleAuth = () => {
         signInWithPopup(auth, googleProvider)
@@ -61,7 +75,7 @@ const Login = () => {
                         signed ? "hidden" : "block"
                     }`}
                 >
-                    Login With Google <i class="fa-brands fa-google"></i>
+                    Login With Google <i className="fa-brands fa-google"></i>
                 </button>
                 <button
                     onClick={handleGithubSignIn}
@@ -69,7 +83,7 @@ const Login = () => {
                         signed ? "hidden" : "block"
                     }`}
                 >
-                    Login With Github <i class="fa-brands fa-github"></i>
+                    Login With Github <i className="fa-brands fa-github"></i>
                 </button>
             </div>
 
@@ -82,9 +96,9 @@ const Login = () => {
                     />
                     <div>
                         <h1 className="text-2xl font-bold">
-                            Name:{user.displayName}
+                            {user.displayName}
                         </h1>
-                        <h1 className="font-semibold">Email:{user.email}</h1>
+                        <h1 className="font-semibold">{user.email}</h1>
                     </div>
                     <button
                         onClick={handleSignOut}
