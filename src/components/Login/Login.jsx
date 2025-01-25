@@ -68,7 +68,7 @@ const Login = () => {
 
     return (
         <div>
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-col md:flex-row justify-center gap-4">
                 <button
                     onClick={handleGoogleAuth}
                     className={`btn bg-[#7b3aec] text-white ${
